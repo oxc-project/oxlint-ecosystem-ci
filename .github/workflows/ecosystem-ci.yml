@@ -1,0 +1,78 @@
+name: oxlint ecosystem ci
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout oxc
+        uses: actions/checkout@v4
+        with:
+          repository: oxc-project/oxc
+          ref: main
+
+      - name: Install Rust
+        uses: moonrepo/setup-rust@v1
+        with:
+          bins: just
+          cache-base: main
+
+      - name: Build oxlint
+        run: just oxlint
+
+      - name: Upload Binary
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: oxlint
+          path: ./target/release/oxlint
+
+  test-ecosystem:
+    needs: build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repository: rolldown/rolldown
+            ref: main
+            path: rolldown
+            command: ./oxlint --ignore-path=.oxlintignore --import-plugin --deny-warnings
+    name: Test ${{ matrix.repository }}
+    steps:
+      - name: Clone ${{ matrix.repository }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+          path: ${{ matrix.path }}
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: oxlint
+          path: ${{ matrix.path }}
+
+      - name: chmod +x oxlint
+        run: chmod +x ./oxlint
+        working-directory: ${{ matrix.path }}
+
+      - name: Run
+        working-directory: ${{ matrix.path }}
+        run: ${{ matrix.command }}
