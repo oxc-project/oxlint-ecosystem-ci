@@ -55,7 +55,13 @@ jobs:
             ref: main
             path: rolldown
             command: ./oxlint --ignore-path=.oxlintignore --import-plugin --deny-warnings
-    name: Test ${{ matrix.repository }}
+
+          - repository: napi-rs/napi-rs
+            ref: main
+            path: napi-rs
+            command: ./oxlint --ignore-path=./.oxlintignore --import-plugin --deny-warnings -D correctness -A no-export
+
+    name: ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
         uses: actions/checkout@v4
