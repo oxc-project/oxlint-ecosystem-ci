@@ -61,6 +61,11 @@ jobs:
             path: napi-rs
             command: ./oxlint --ignore-path=./.oxlintignore --import-plugin --deny-warnings -D correctness -A no-export
 
+          - repository: toeverything/affine
+            ref: canary
+            path: affine
+            command: ./oxlint -c ./oxlint.json --deny-warnings --import-plugin -D correctness -D perf
+
     name: ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
