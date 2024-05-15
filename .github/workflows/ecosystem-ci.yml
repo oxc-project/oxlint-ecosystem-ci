@@ -54,22 +54,22 @@ jobs:
           - repository: rolldown/rolldown
             ref: main
             path: rolldown
-            command: ./oxlint --ignore-path=.oxlintignore --import-plugin --deny-warnings
+            command: ./oxlint --deny-warnings --ignore-path=.oxlintignore --import-plugin
 
           - repository: napi-rs/napi-rs
             ref: main
             path: napi-rs
-            command: ./oxlint --ignore-path=./.oxlintignore --import-plugin --deny-warnings -D correctness -A no-export
+            command: ./oxlint --deny-warnings --ignore-path=.oxlintignore --import-plugin -D correctness -A no-export
 
           - repository: toeverything/affine
             ref: canary
             path: affine
-            command: ./oxlint -c ./oxlint.json --deny-warnings --import-plugin -D correctness -D perf
+            command: ./oxlint --deny-warnings -c oxlint.json --import-plugin -D correctness -D perf
 
           - repository: preactjs/preact
             ref: main
             path: preact
-            command: ./oxlint -c ./oxlint.json --deny-warnings oxlint src test debug compat hooks test-utils
+            command: ./oxlint --deny-warnings -c oxlint.json oxlint src test debug compat hooks test-utils
 
     name: ${{ matrix.repository }}
     steps:
