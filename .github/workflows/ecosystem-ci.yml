@@ -66,6 +66,11 @@ jobs:
             path: affine
             command: ./oxlint -c ./oxlint.json --deny-warnings --import-plugin -D correctness -D perf
 
+          - repository: preactjs/preact
+            ref: main
+            path: preact
+            command: ./oxlint -c ./oxlint.json --deny-warnings oxlint src test debug compat hooks test-utils
+
     name: ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
