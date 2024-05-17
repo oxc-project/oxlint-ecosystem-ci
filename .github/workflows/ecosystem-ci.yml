@@ -43,34 +43,27 @@ jobs:
           name: oxlint
           path: ./target/release/oxlint
 
-  test-ecosystem:
+  checkout:
+    name: Read matrix.json
     needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setmatrix.outputs.content }}
+    steps:
+      - uses: taiki-e/checkout-action@v1
+      - id: setmatrix
+        uses: jaywcjlove/github-action-read-file@main
+        with:
+          localfile: ./matrix.json
+
+  test-ecosystem:
+    needs: checkout
     timeout-minutes: 30
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - repository: rolldown/rolldown
-            ref: main
-            path: rolldown
-            command: ./oxlint --deny-warnings --ignore-path=.oxlintignore --import-plugin
-
-          - repository: napi-rs/napi-rs
-            ref: main
-            path: napi-rs
-            command: ./oxlint --deny-warnings --ignore-path=.oxlintignore --import-plugin -D correctness -A no-export
-
-          - repository: toeverything/affine
-            ref: canary
-            path: affine
-            command: ./oxlint --deny-warnings -c oxlint.json --import-plugin -D correctness -D perf
-
-          - repository: preactjs/preact
-            ref: main
-            path: preact
-            command: ./oxlint --deny-warnings -c oxlint.json oxlint src test debug compat hooks test-utils
-
+        include: ${{ fromJson(needs.checkout.outputs.matrix) }}
     name: ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
