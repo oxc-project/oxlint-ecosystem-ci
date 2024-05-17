@@ -86,3 +86,22 @@ jobs:
       - name: Run
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
+
+      - name: Check Panic
+        working-directory: ${{ matrix.path }}
+        run: |
+          set +e # disable exit on run
+
+          # TODO: --jest-plugin
+          ./oxlint --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --quiet
+
+          EXIT_CODE=$?
+
+          # Panic returns exit code > 1, e.g. 101 when a Rust program panics
+          if [ $EXIT_CODE -gt 1 ]; then
+              echo "exitcode=$EXIT_CODE" >> $GITHUB_OUTPUT
+              exit $EXIT_CODE
+          fi
+
+          echo "exitcode=0" >> $GITHUB_OUTPUT
+          exit 0
