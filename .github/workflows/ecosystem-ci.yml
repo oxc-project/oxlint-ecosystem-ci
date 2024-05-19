@@ -92,8 +92,7 @@ jobs:
         run: |
           set +e # disable exit on run
 
-          # TODO: --jest-plugin
-          ./oxlint --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --quiet
+          ./oxlint --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --quiet
 
           EXIT_CODE=$?
 
