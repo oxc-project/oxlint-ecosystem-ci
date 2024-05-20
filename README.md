@@ -17,7 +17,7 @@ Workflows are scheduled to run automatically every day
 
 - `./clone.js` - clones all the repositories
 - `./update.js` - updates (git pull) all the repositories
-- `./run.js PATH_TO_OXLINT_BINARY` - run oxlint
+- `./test.js /path/to/oxc/target/release/oxlint ARGS` - run oxlint
 
 ## Add a new integration test
 

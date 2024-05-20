@@ -11,8 +11,11 @@ if (!binary) {
   return;
 }
 
+const args = process.argv.slice(3);
+
 for (const item of matrix) {
   const oxlint = item.command.replace(/^.\/oxlint/, binary);
-  const command = `cd repos/${item.path} && ${oxlint}`;
+  const command = `cd repos/${item.path} && ${oxlint} ${args.join(' ')}`;
+  console.log(command);
   execSync(command, { stdio: "inherit" });
 }
