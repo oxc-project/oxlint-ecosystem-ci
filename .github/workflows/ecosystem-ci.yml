@@ -31,11 +31,10 @@ jobs:
           ref: main
 
       - name: Install Rust
-        uses: moonrepo/setup-rust@v1
+        uses: Boshen/setup-rust@main
         with:
-          bins: just
-          cache-base: main
-          cache-target: release
+          tools: just
+          save-cache: true # ${{ github.ref_name == 'main' }}
 
       - name: Build oxlint
         run: just oxlint
