@@ -34,7 +34,7 @@ jobs:
         uses: Boshen/setup-rust@main
         with:
           tools: just
-          save-cache: true # ${{ github.ref_name == 'main' }}
+          save-cache: ${{ github.ref_name == 'main' }}
 
       - name: Build oxlint
         run: just oxlint
