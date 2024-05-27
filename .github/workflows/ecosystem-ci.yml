@@ -96,7 +96,7 @@ jobs:
         run: |
           set +e # disable exit on run
 
-          ./oxlint --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --quiet
+          ./oxlint --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --silent
 
           EXIT_CODE=$?
 
