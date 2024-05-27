@@ -34,8 +34,9 @@ jobs:
         uses: moonrepo/setup-rust@v1
         with:
           bins: just
-          cache-base: main
+          # cache-base: main
           cache-target: release
+          target-dirs: oxc/target
 
       - name: Build oxlint
         run: just oxlint
