@@ -33,11 +33,10 @@ jobs:
       - name: Install Rust
         uses: Boshen/setup-rust@main
         with:
-          tools: just
           save-cache: ${{ github.ref_name == 'main' }}
 
       - name: Build oxlint
-        run: just oxlint
+        run: cargo oxlint
 
       - name: Upload Binary
         uses: actions/upload-artifact@v4
