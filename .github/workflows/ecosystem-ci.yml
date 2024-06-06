@@ -28,7 +28,7 @@ defaults:
 jobs:
   reply:
     name: Reply
-    if: ${{ inputs.issue-number && inputs.commit-id }}
+    if: ${{ inputs.issue-number && inputs.comment-id }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -78,7 +78,7 @@ jobs:
       - uses: taiki-e/checkout-action@v1
 
       - uses: peter-evans/create-or-update-comment@v4
-        if: ${{ inputs.issue-number && inputs.commit-id }}
+        if: ${{ inputs.issue-number && inputs.comment-id }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: oxc-project/oxc
@@ -186,7 +186,7 @@ jobs:
             return body;
 
       - uses: peter-evans/create-or-update-comment@v4
-        if: ${{ inputs.issue-number && inputs.commit-id }}
+        if: ${{ inputs.issue-number && inputs.comment-id }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: oxc-project/oxc
