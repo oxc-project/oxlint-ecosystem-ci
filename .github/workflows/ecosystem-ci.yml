@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           repository: oxc-project/oxc
           issue-number: ${{ inputs.issue-number }}
           comment-id: ${{ inputs.comment-id }}
@@ -188,7 +188,7 @@ jobs:
       - uses: peter-evans/create-or-update-comment@v4
         if: ${{ inputs.issue-number && inputs.comment-id }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           repository: oxc-project/oxc
           issue-number: ${{ inputs.issue-number }}
           comment-id: ${{ inputs.comment-id }}
