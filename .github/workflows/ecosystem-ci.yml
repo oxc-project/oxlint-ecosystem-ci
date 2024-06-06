@@ -1,7 +1,6 @@
 name: oxlint ecosystem ci
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
   pull_request:
@@ -13,12 +12,36 @@ on:
       - main
     paths-ignore:
       - '**/*.md'
+  workflow_dispatch:
+    inputs: # for create comment action https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs
+      issue-number:
+        required: false
+        type: string
+      comment-id:
+        required: false
+        type: string
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  reply:
+    name: Reply
+    if: ${{ inputs.issue-number && inputs.commit-id }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: oxc-project/oxc
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          reactions: eyes
+
   build:
     name: Build
     timeout-minutes: 30
@@ -53,12 +76,22 @@ jobs:
       matrix: ${{ steps.setmatrix.outputs.content }}
     steps:
       - uses: taiki-e/checkout-action@v1
+
+      - uses: peter-evans/create-or-update-comment@v4
+        if: ${{ inputs.issue-number && inputs.commit-id }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: oxc-project/oxc
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          reactions: eyes
+
       - id: setmatrix
         uses: jaywcjlove/github-action-read-file@main
         with:
           localfile: ./matrix.json
 
-  test-ecosystem:
+  test:
     needs: checkout
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -66,7 +99,7 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJson(needs.checkout.outputs.matrix) }}
-    name: ${{ matrix.repository }}
+    name: Test ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
         uses: actions/checkout@v4
@@ -106,3 +139,58 @@ jobs:
 
           echo "exitcode=0" >> $GITHUB_OUTPUT
           exit 0
+
+  comment:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Reply Comment
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: actions/github-script@v6
+        id: script
+        if: ${{ inputs.issue-number }}
+        with:
+          github-token: ${{ secrets.PAT }}
+          result-encoding: string
+          script: |
+            const {
+              data: { jobs },
+            } = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              per_page: 100,
+            });
+            let result = jobs
+              .filter((job) => job.name.startsWith("Test "))
+              .map((job) => {
+                const suite = job.name.replace(/^Test \(([^)]+)\)$/, "$1");
+                return { suite, conclusion: job.conclusion, link: job.html_url };
+              });
+            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const urlLink = `[Open](${url})`;
+            const conclusionEmoji = {
+              success: ":white_check_mark:",
+              failure: ":x:",
+              cancelled: ":stop_button:",
+            };
+            const body = `
+            📝 Ran ecosystem CI: ${urlLink}
+            | suite | result |
+            |-------|--------|
+            ${result.map((r) => `| [${r.suite}](${r.link}) | ${conclusionEmoji[r.conclusion]} ${r.conclusion} |`).join("\n")}
+            `;
+            return body;
+
+      - uses: peter-evans/create-or-update-comment@v4
+        if: ${{ inputs.issue-number && inputs.commit-id }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: oxc-project/oxc
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          body: ${{ steps.script.outputs.result }}
+          edit-mode: replace
