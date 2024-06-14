@@ -24,6 +24,12 @@
     "command": "./oxlint --deny-warnings -c oxlint.json oxlint src test debug compat hooks test-utils"
   },
   {
+    "repository": "microsoft/vscode",
+    "ref": "main",
+    "path": "vscode",
+    "command": "./oxlint -D no-unreachable -D no-this-before-super -D rules-of-hooks"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
