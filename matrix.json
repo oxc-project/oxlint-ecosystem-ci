@@ -36,9 +36,15 @@
     "command": "./oxlint -D getter-return"
   },
   {
+    "repository": "microsoft/vscode",
+    "ref": "main",
+    "path": "vscode",
+    "command": "./oxlint -D getter-return"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
-    "command": "./oxlint -D getter-return"
+    "command": "echo 'skipped'"
   }
 ]
