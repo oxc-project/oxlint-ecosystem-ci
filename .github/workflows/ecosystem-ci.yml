@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: oxc-project/oxc
-          ref: main
+          ref: 06-19-fix_linter_fix_and_promote_getter-return_to_correctness
 
       - name: Install Rust
         uses: Boshen/setup-rust@main
