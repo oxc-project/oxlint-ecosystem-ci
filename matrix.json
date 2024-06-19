@@ -30,6 +30,18 @@
     "command": "./oxlint -D no-unreachable -D no-this-before-super -D getter-return"
   },
   {
+    "repository": "calcom/cal.com",
+    "ref": "main",
+    "path": "cal",
+    "command": "echo 'skipped'"
+  },
+  {
+    "repository": "bbc/simorgh",
+    "ref": "latest",
+    "path": "simorgh",
+    "command": "./oxlint -D no-unreachable"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
