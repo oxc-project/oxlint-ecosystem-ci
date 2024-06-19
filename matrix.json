@@ -24,6 +24,18 @@
     "command": "./oxlint --deny-warnings -c oxlint.json oxlint src test debug compat hooks test-utils"
   },
   {
+    "repository": "calcom/cal.com",
+    "ref": "main",
+    "path": "cal",
+    "command": "echo 'skipped'"
+  },
+  {
+    "repository": "bbc/simorgh",
+    "ref": "latest",
+    "path": "simorgh",
+    "command": "./oxlint -D no-unreachable"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
