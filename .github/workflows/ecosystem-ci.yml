@@ -51,7 +51,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout oxc
+      - name: Checkout oxc (${{ inputs.ref }})
         uses: actions/checkout@v4
         with:
           repository: oxc-project/oxc
