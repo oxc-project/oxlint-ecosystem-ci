@@ -19,6 +19,7 @@ Workflows are scheduled to run automatically every day
 
 * open [workflow](https://github.com/oxc-project/oxlint-ecosystem-ci/actions/workflows/ecosystem-ci.yml)
 * click 'Run workflow' button on top right of the list
+* change `ref` for a different branch
 
 ## Local
 
