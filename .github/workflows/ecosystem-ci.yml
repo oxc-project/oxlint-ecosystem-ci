@@ -151,17 +151,24 @@ jobs:
       # a parse error or a panic.
       - name: Re-Parse After `--fix`
         working-directory: ${{ matrix.path }}
+        if: ${{ matrix.path != 'DefinitelyTyped' }}
         run: |
-          ./oxlint \
-            --fix \
+          oxlint_args="\
             --jsdoc-plugin \
             --jest-plugin \
             --vitest-plugin \
             --jsx-a11y-plugin \
             --nextjs-plugin \
             --react-perf-plugin \
-            -W all \
-            --silent
+            -A all \
+          "
+
+          has_oxlintignore=$(ls | grep .oxlintignore | wc -l | xargs)
+          if [[ $has_oxlintignore -gt 0 ]]; then
+            oxlint_args="$oxlint_args --ignore-path .oxlintignore"
+          fi
+
+          ./oxlint $oxlint_args
 
   comment:
     needs: test
