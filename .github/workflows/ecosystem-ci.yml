@@ -153,17 +153,17 @@ jobs:
         working-directory: ${{ matrix.path }}
         if: ${{ matrix.path != 'DefinitelyTyped' }}
         run: |
-          oxlint_args="--jsdoc-plugin --jest-plugin --vitest-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -A all"
+          OXLINT_ARGS="--jsdoc-plugin --jest-plugin --vitest-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -A all"
 
-          has_oxlintignore=$(ls | grep .oxlintignore | wc -l | xargs)
-          if [[ $has_oxlintignore -gt 0 ]]; then
-            echo ".oxlintignore exists"
-            oxlint_args="$oxlint_args --ignore-path .oxlintignore"
+          HAS_OXLINTIGNORE=$(ls | grep .oxlintignore | wc -l | xargs)
+          if [ $HAS_OXLINTIGNORE -gt 0 ]; then
+              echo ".oxlintignore exists"
+              OXLINT_ARGS="$OXLINT_ARGS --ignore-path .oxlintignore"
           else
-            echo ".oxlintignore does not exist"
+              echo ".oxlintignore does not exist"
           fi
 
-          ./oxlint $oxlint_args
+          ./oxlint $OXLINT_ARGS
         env:
           RUST_BACKTRACE: '1'
 
