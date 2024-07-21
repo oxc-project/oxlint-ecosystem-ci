@@ -2,7 +2,7 @@ name: oxlint ecosystem ci
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 */3 * * *" # Every 3 hours.
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
