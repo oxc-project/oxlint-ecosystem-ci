@@ -111,10 +111,21 @@ jobs:
 
       - name: Check Panic
         working-directory: ${{ matrix.path }}
+        # NOTE (@DonIsaac): should we enable import-plugin?
+        # NOTE (@DonIsaac): should we test nursery rules too?
         run: |
           set +e # disable exit on run
 
-          ./oxlint --fix --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -D all --silent
+          ./oxlint \
+            --fix \
+            --jsdoc-plugin \
+            --jest-plugin \
+            --vitest-plugin \
+            --jsx-a11y-plugin \
+            --nextjs-plugin \
+            --react-perf-plugin \
+            -D all \
+            --silent
 
           EXIT_CODE=$?
 
@@ -126,6 +137,27 @@ jobs:
 
           echo "exitcode=0" >> $GITHUB_OUTPUT
           exit 0
+
+      # Check for invalid syntax after lint rule violations have been fixed.
+      # All lint rules are set to `warning` here, so an exit code > 0 is either
+      # a parse error or a panic.
+      - name: Re-Parse After `--fix`
+        working-directory: ${{ matrix.path }}
+        if: ${{ matrix.path != 'DefinitelyTyped' }}
+        run: |
+          OXLINT_ARGS="--jsdoc-plugin --jest-plugin --vitest-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin -A all"
+
+          HAS_OXLINTIGNORE=$(ls | grep .oxlintignore | wc -l | xargs)
+          if [ $HAS_OXLINTIGNORE -gt 0 ]; then
+              echo ".oxlintignore exists"
+              OXLINT_ARGS="$OXLINT_ARGS --ignore-path .oxlintignore"
+          else
+              echo ".oxlintignore does not exist"
+          fi
+
+          ./oxlint $OXLINT_ARGS
+        env:
+          RUST_BACKTRACE: '1'
 
   comment:
     needs: test
