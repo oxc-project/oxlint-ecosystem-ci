@@ -25,10 +25,6 @@ on:
         type: string
         default: 'main'
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   reply:
     name: Reply
@@ -51,22 +47,20 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout oxc (${{ inputs.ref }})
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: oxc-project/oxc
           ref: ${{ inputs.ref }}
 
-      - name: Install Rust
-        uses: Boshen/setup-rust@main
+      - uses: Boshen/setup-rust@main
         with:
           save-cache: ${{ github.ref_name == 'main' }}
 
-      - name: Build oxlint
-        run: cargo oxlint
+      - run: cargo oxlint
+        env:
+          RUSTFLAGS: "-C debug-assertions=true"
 
-      - name: Upload Binary
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
           name: oxlint
@@ -103,14 +97,12 @@ jobs:
           ref: ${{ matrix.ref }}
           path: ${{ matrix.path }}
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: oxlint
           path: ${{ matrix.path }}
 
-      - name: chmod +x oxlint
-        run: chmod +x ./oxlint
+      - run: chmod +x ./oxlint
         working-directory: ${{ matrix.path }}
 
       - name: Run
