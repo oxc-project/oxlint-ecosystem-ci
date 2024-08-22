@@ -42,6 +42,12 @@
     "command": "./oxlint -D no-unreachable"
   },
   {
+    "repository": "sidebase/nuxt-auth",
+    "ref": "main",
+    "path": "nuxt-auth",
+    "command": "./oxlint --deny-warnings -D correctness -D suspicious -D perf"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
