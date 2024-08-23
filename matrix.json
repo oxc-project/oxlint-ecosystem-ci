@@ -48,6 +48,12 @@
     "command": "./oxlint --deny-warnings -D correctness -D suspicious -D perf"
   },
   {
+    "repository": "elastic/kibana",
+    "ref": "main",
+    "path": "kibana",
+    "command": "echo 'skipped'"
+  },
+  {
     "repository": "DefinitelyTyped/DefinitelyTyped",
     "ref": "master",
     "path": "DefinitelyTyped",
