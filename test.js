@@ -1,15 +1,21 @@
 #!/usr/bin/env node
 
-const execSync = require("child_process").execSync;
+const assert = require("node:assert")
+const { execSync } = require("node:child_process");
+const { existsSync } = require("node:fs");
+const { resolve } = require("node:path");
 
 const matrix = require("./matrix.json");
 
-const binary = process.argv[2];
+let binary = process.argv[2];
 
 if (!binary) {
   console.error("USAGE: ./test.js PATH_TO_OXLINT_BINARY");
-  return;
+  process.exit(0);
 }
+binary = resolve(binary); // normalize relative paths
+
+assert(existsSync("repos"), "No repositories found, did you forget to run clone.js?");
 
 const args = process.argv.slice(3);
 
