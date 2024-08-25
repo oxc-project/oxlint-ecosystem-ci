@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-const exec = require("child_process").exec;
+const assert = require("node:assert");
+const exec = require("node:child_process").exec;
+const { existsSync } = require("node:fs");
 
 const matrix = require("./matrix.json");
+
+assert(existsSync("repos"), "No repositories found, did you forget to run clone.js?");
 
 for (const item of matrix) {
   const command = `cd repos/${item.path} && git pull`;
