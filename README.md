@@ -1,10 +1,10 @@
 # `oxlint` Ecosystem CI
 
-This repository is used to run integration tests for `oxlint` ecosystem projects
+This repository is used to run integration tests for `oxlint` ecosystem projects.
 
 ## Add a new integration
 
-* Add your repository to [./matrix.json](./matrix.json) and create a PR
+* Add your repository to [./matrix.json](./matrix.json) and create a PR.
 
 ## Maintenance
 
@@ -13,7 +13,7 @@ This repository is used to run integration tests for `oxlint` ecosystem projects
 
 ## Scheduled github workflow
 
-Workflows are scheduled to run automatically every day
+Workflows are scheduled to run automatically every day.
 
 ## Manual github workflow
 
@@ -37,7 +37,11 @@ Notable repositories:
 * [napi-rs/napi-rs](https://github.com/napi-rs/napi-rs)
 * [toeverything/affine](https://github.com/toeverything/affine)
 * [preactjs/preact](https://github.com/preactjs/preact)
+* [microsoft/vscode](https://github.com/microsoft/vscode)
+* [bbc/simorgh](https://github.com/bbc/simorgh)
+* [elastic/kibana](https://github.com/elastic/kibana)
 * [DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)
+
 
 <p align="center">
   <a href="https://github.com/sponsors/Boshen">
