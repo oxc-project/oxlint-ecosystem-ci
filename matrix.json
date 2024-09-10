@@ -58,5 +58,11 @@
     "ref": "master",
     "path": "DefinitelyTyped",
     "command": "echo 'skipped'"
+  },
+  {
+    "repository": "Milkdown/milkdown",
+    "ref": "main",
+    "path": "milkdown",
+    "command": "./oxlint -c .oxlintrc.json"
   }
 ]
