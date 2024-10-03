@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: peter-evans/create-or-update-comment@v4
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.OXC_BOT_PAT }}
           repository: oxc-project/oxc
           issue-number: ${{ inputs.issue-number }}
           comment-id: ${{ inputs.comment-id }}
@@ -140,7 +140,7 @@ jobs:
         id: script
         if: ${{ inputs.issue-number }}
         with:
-          github-token: ${{ secrets.PAT }}
+          github-token: ${{ secrets.OXC_BOT_PAT }}
           result-encoding: string
           script: |
             const {
@@ -175,7 +175,7 @@ jobs:
       - uses: peter-evans/create-or-update-comment@v4
         if: ${{ inputs.issue-number && inputs.comment-id }}
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.OXC_BOT_PAT }}
           repository: oxc-project/oxc
           issue-number: ${{ inputs.issue-number }}
           comment-id: ${{ inputs.comment-id }}
