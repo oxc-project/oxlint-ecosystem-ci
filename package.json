@@ -1,0 +1,15 @@
+{
+    "name": "oxlint-ecosystem-ci",
+    "version": "0.0.0",
+    "description": "Integration tests against other projects using oxlint",
+    "private": true,
+    "main": "test.js",
+    "type": "commonjs",
+    "scripts": {
+        "clone": "node clone.js",
+        "test": "RUST_BACKTRACE=1 node test.js",
+        "test:default": "RUST_BACKTRACE=1 node test.js $(which oxlint)",
+        "update": "node update.js",
+        "lint": "npx oxlint@latest ."
+    }
+}
