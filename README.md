@@ -23,9 +23,9 @@ Workflows are scheduled to run automatically every day.
 
 ## Local
 
-- `./clone.js` - clones all the repositories
-- `./update.js` - updates (git pull) all the repositories
-- `./test.js /path/to/oxc/target/release/oxlint ARGS` - run `oxlint`
+- `pnpm clone` - clones all the repositories
+- `pnpm update` - updates (git pull) all the repositories
+- `pnpm test /path/to/oxc/target/release/oxlint ARGS` - run `oxlint`
 
 ## Integrated Repositories
 
