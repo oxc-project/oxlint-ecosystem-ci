@@ -11,6 +11,7 @@
         "test:default": "RUST_BACKTRACE=1 node bin/test.js $(which oxlint)",
         "update": "node bin/update.js",
         "reset": "node bin/reset.js",
+        "clean": "node bin/clean.js",
         "lint": "npx oxlint@latest ."
     }
 }
