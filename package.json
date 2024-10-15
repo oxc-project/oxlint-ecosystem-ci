@@ -6,10 +6,10 @@
     "main": "test.js",
     "type": "commonjs",
     "scripts": {
-        "clone": "node clone.js",
-        "test": "RUST_BACKTRACE=1 node test.js",
-        "test:default": "RUST_BACKTRACE=1 node test.js $(which oxlint)",
-        "update": "node update.js",
+        "clone": "node bin/clone.js",
+        "test": "RUST_BACKTRACE=1 node bin/test.js",
+        "test:default": "RUST_BACKTRACE=1 node bin/test.js $(which oxlint)",
+        "update": "node bin/update.js",
         "lint": "npx oxlint@latest ."
     }
 }

@@ -4,7 +4,7 @@ const assert = require("node:assert");
 const exec = require("node:child_process").exec;
 const { existsSync } = require("node:fs");
 
-const matrix = require("./matrix.json");
+const matrix = require("../matrix.json");
 
 assert(existsSync("repos"), "No repositories found, did you forget to run clone.js?");
 

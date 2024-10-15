@@ -5,7 +5,7 @@ const { execSync } = require("node:child_process");
 const { existsSync } = require("node:fs");
 const { resolve } = require("node:path");
 
-const matrix = require("./matrix.json");
+const matrix = require("../matrix.json");
 
 let binary = process.argv[2];
 
