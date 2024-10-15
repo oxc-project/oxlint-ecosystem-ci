@@ -10,6 +10,7 @@
         "test": "RUST_BACKTRACE=1 node bin/test.js",
         "test:default": "RUST_BACKTRACE=1 node bin/test.js $(which oxlint)",
         "update": "node bin/update.js",
+        "reset": "node bin/reset.js",
         "lint": "npx oxlint@latest ."
     }
 }
