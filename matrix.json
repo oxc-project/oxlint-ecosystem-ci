@@ -15,7 +15,7 @@
     "repository": "toeverything/affine",
     "ref": "canary",
     "path": "affine",
-    "command": "./oxlint --deny-warnings -c oxlint.json -D correctness -D perf -A prefer-string-starts-ends-with"
+    "command": "./oxlint -c oxlint.json --deny-warnings --import-plugin"
   },
   {
     "repository": "preactjs/preact",
