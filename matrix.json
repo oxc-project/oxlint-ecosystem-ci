@@ -27,7 +27,7 @@
     "repository": "microsoft/vscode",
     "ref": "main",
     "path": "vscode",
-    "command": "./oxlint -D no-unreachable -D no-this-before-super -D getter-return --ignore-pattern '**/fixtures'"
+    "command": "./oxlint -W all --ignore-pattern '**/fixtures' --silent"
   },
   {
     "repository": "calcom/cal.com",
