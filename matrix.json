@@ -64,5 +64,11 @@
     "ref": "main",
     "path": "milkdown",
     "command": "./oxlint -c .oxlintrc.json"
+  },
+  {
+    "repository": "bluesky-social/social-app",
+    "ref": "main",
+    "path": "bluesky",
+    "command": "./oxlint -W all --silent"
   }
 ]
