@@ -111,7 +111,7 @@ jobs:
 
       - name: Check ExhaustiveDeps
         working-directory: ${{ matrix.path }}
-        run: ./oxlint -D exhaustive-deps
+        run: ./oxlint -A all -D exhaustive-deps
 
       - name: Check Panic
         working-directory: ${{ matrix.path }}
