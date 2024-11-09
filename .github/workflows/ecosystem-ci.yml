@@ -109,6 +109,10 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
 
+      - name: Check Nursery
+        working-directory: ${{ matrix.path }}
+        run: ./oxlint -D nursery
+
       - name: Check Panic
         working-directory: ${{ matrix.path }}
         run: |
