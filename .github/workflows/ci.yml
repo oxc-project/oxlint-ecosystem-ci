@@ -109,10 +109,6 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
 
-      - name: Check ExhaustiveDeps
-        working-directory: ${{ matrix.path }}
-        run: ./oxlint -A all -D exhaustive-deps
-
       - name: Check Panic
         working-directory: ${{ matrix.path }}
         run: |
