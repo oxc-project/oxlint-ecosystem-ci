@@ -8,7 +8,7 @@ This repository is used to run integration tests for `oxlint` ecosystem projects
 
 ## Maintenance
 
-* [Boshen](https://github.com/Boshen) or [Don](https://github.com/donisaac) may actively submit a `oxlint` adjustment PR to your repository if it fails to run correctly.
+* [Boshen](https://github.com/Boshen) may submit a `oxlint` adjustment PR to your repository if it fails to run correctly.
 * Due to maintenance burden, a [sponsorship](https://github.com/sponsors/Boshen) will have a more likely hood of having the PR accepted.
 
 ## Scheduled github workflow
