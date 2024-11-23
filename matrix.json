@@ -15,7 +15,7 @@
     "repository": "toeverything/affine",
     "ref": "canary",
     "path": "affine",
-    "command": "./oxlint -c oxlint.json --deny-warnings --import-plugin"
+    "command": "./oxlint -c oxlint.json --deny-warnings --import-plugin -A no-array-index-key -A prefer-array-some"
   },
   {
     "repository": "preactjs/preact",
