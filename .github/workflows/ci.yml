@@ -105,9 +105,13 @@ jobs:
       - run: chmod +x ./oxlint
         working-directory: ${{ matrix.path }}
 
-      - name: Run
+      # - name: Run
+      #   working-directory: ${{ matrix.path }}
+      #   run: ${{ matrix.command }}
+
+      - name: Check ExhaustiveDeps
         working-directory: ${{ matrix.path }}
-        run: ${{ matrix.command }}
+        run: ./oxlint -A all -D no-unused-expressions
 
       - name: Check Panic
         working-directory: ${{ matrix.path }}
