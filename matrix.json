@@ -70,5 +70,11 @@
     "ref": "main",
     "path": "bluesky",
     "command": "./oxlint -W all --silent"
+  },
+  {
+    "repository": "oven-sh/bun",
+    "ref": "main",
+    "path": "bun",
+    "command": "./oxlint -c oxlint.json --silent"
   }
 ]
