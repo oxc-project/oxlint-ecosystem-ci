@@ -27,7 +27,7 @@
     "repository": "microsoft/vscode",
     "ref": "main",
     "path": "vscode",
-    "command": "./oxlint -W all --ignore-pattern '**/fixtures' --ignore-pattern test-checker.ts --silent"
+    "command": "./oxlint -W all --ignore-pattern '**/fixtures' --ignore-pattern 'test-*.ts' --silent"
   },
   {
     "repository": "calcom/cal.com",
