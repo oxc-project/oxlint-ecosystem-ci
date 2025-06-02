@@ -12,12 +12,6 @@
     "command": "./oxlint --deny-warnings --ignore-path=.oxlintignore --import-plugin -D correctness -A no-export"
   },
   {
-    "repository": "toeverything/affine",
-    "ref": "canary",
-    "path": "affine",
-    "command": "./oxlint -c oxlint.json --deny-warnings"
-  },
-  {
     "repository": "preactjs/preact",
     "ref": "main",
     "path": "preact",
