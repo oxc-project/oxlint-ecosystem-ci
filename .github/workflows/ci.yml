@@ -51,6 +51,8 @@ jobs:
         with:
           repository: oxc-project/oxc
           ref: ${{ inputs.ref }}
+          persist-credentials: false
+          show-progress: false
 
       - uses: Boshen/setup-rust@main
         with:
