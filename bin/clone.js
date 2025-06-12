@@ -15,7 +15,7 @@ const matrix = require("../matrix.json");
  * @param {MatrixItem} item
  */
 function cloneRepo(item) {
-  const command = `git clone --depth=1 --filter blob:limit=200k --no-tags -b ${item.ref} git@github.com:${item.repository}.git repos/${item.path}`;
+  const command = `git clone --depth=1 --filter=blob:none --no-tags -b ${item.ref} git@github.com:${item.repository}.git repos/${item.path}`;
 
   console.log(`Running ${command}`);
   exec(command, function (err) {

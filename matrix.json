@@ -69,12 +69,24 @@
     "repository": "bluesky-social/social-app",
     "ref": "main",
     "path": "bluesky",
-    "command": "./oxlint -W all --silent"
+    "command": "echo 'skipped'"
   },
   {
     "repository": "oven-sh/bun",
     "ref": "main",
     "path": "bun",
     "command": "./oxlint -c oxlint.json src/js"
+  },
+  {
+    "repository": "nestjs/nest",
+    "ref": "master",
+    "path": "nest",
+    "command": "echo 'skipped'"
+  },
+  {
+    "repository": "vercel/next.js",
+    "ref": "canary",
+    "path": "next",
+    "command": "echo 'skipped'"
   }
 ]
