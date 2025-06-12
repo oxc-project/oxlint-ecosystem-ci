@@ -98,7 +98,6 @@ jobs:
           path: ${{ matrix.path }}
           persist-credentials: false
           show-progress: false
-          filter: 'blob:none'
 
       - uses: actions/download-artifact@v4
         with:
