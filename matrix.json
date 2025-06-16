@@ -88,5 +88,11 @@
     "ref": "canary",
     "path": "next",
     "command": "echo 'skipped'"
+  },
+  {
+    "repository": "monkeytypegame/monkeytype",
+    "ref": "master",
+    "path": "monkeytype",
+    "command": "./oxlint -c ./backend/.oxlintrc.json ./backend && ./oxlint -c ./frontend/.oxlintrc.json ./frontend"
   }
 ]
