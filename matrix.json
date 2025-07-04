@@ -98,7 +98,7 @@
   {
     "repository": "PostHog/posthog",
     "ref": "master",
-    "path": "monkeytype",
+    "path": "posthog",
     "command": "./oxlint"
   }
 ]
