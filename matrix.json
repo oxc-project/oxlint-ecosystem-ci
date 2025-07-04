@@ -94,5 +94,11 @@
     "ref": "master",
     "path": "monkeytype",
     "command": "./oxlint -c ./backend/.oxlintrc.json ./backend && ./oxlint -c ./frontend/.oxlintrc.json ./frontend"
+  },
+  {
+    "repository": "PostHog/posthog",
+    "ref": "master",
+    "path": "monkeytype",
+    "command": "./oxlint"
   }
 ]
