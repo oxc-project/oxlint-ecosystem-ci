@@ -100,5 +100,11 @@
     "ref": "master",
     "path": "posthog",
     "command": "./oxlint"
+  },
+  {
+    "repository": "outline/outline",
+    "ref": "main",
+    "path": "outline",
+    "command": "./oxlint"
   }
 ]
