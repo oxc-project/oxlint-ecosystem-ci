@@ -47,7 +47,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: oxc-project/oxc
           ref: ${{ inputs.ref }}
@@ -93,7 +93,7 @@ jobs:
     name: Test ${{ matrix.repository }}
     steps:
       - name: Clone ${{ matrix.repository }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ matrix.repository }}
           ref: ${{ matrix.ref }}
