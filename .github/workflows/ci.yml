@@ -6,12 +6,12 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   push:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   workflow_dispatch:
     inputs: # for create comment action https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs
       issue-number:
@@ -23,7 +23,7 @@ on:
       ref:
         required: false
         type: string
-        default: 'main'
+        default: "main"
 
 jobs:
   reply:
@@ -101,6 +101,11 @@ jobs:
           persist-credentials: false
           show-progress: false
 
+      - name: Checkout CI repository (for compare script)
+        uses: actions/checkout@v5
+        with:
+          path: ci-repo
+
       - uses: actions/download-artifact@v5
         with:
           name: oxlint
@@ -108,6 +113,13 @@ jobs:
 
       - run: chmod +x ./oxlint
         working-directory: ${{ matrix.path }}
+
+      - name: Compare diagnostics with and without optimization
+        if: ${{ !contains(matrix.command, 'echo ') }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          set -e
+          node "${{ github.workspace }}/ci-repo/bin/compare-optimize.js" "${{ matrix.command }}"
 
       - name: Run
         working-directory: ${{ matrix.path }}
