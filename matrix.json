@@ -106,5 +106,11 @@
     "ref": "main",
     "path": "outline",
     "command": "./oxlint"
+  },
+  {
+    "repository": "date-fns/date-fns",
+    "ref": "main",
+    "path": "date-fns",
+    "command": "./oxlint -c .oxlintrc.json"
   }
 ]
