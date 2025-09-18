@@ -58,15 +58,28 @@ jobs:
         with:
           save-cache: ${{ github.ref_name == 'main' }}
 
-      - run: cargo oxlint
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4
+
+      - run: pnpm install
+        working-directory: ./apps/oxlint
+
+      - run: pnpm run build
+        working-directory: ./apps/oxlint
         env:
           RUSTFLAGS: "-C debug-assertions=true"
+
+      - run: pnpm pack
+        working-directory: ./apps/oxlint
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           if-no-files-found: error
           name: oxlint
-          path: ./target/release/oxlint
+          path: ./apps/oxlint/oxlint-*.tgz
 
   checkout:
     name: Read matrix.json
@@ -106,8 +119,28 @@ jobs:
           name: oxlint
           path: ${{ matrix.path }}
 
-      - run: chmod +x ./oxlint
-        working-directory: ${{ matrix.path }}
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4
+        with:
+          version: 10
+
+      - name: Install oxlint package
+        run: |
+          # Extract and install the package
+          tar -xzf ${{ matrix.path }}/oxlint-*.tgz
+          npm install -g ./package
+          
+          # Create a wrapper script that uses node explicitly
+          OXLINT_PATH=$(which oxlint)
+          if [ -f "$OXLINT_PATH" ]; then
+            mv "$OXLINT_PATH" "${OXLINT_PATH}.js"
+            echo '#!/usr/bin/env bash' > "$OXLINT_PATH"
+            echo "exec node '${OXLINT_PATH}.js' \"\$@\"" >> "$OXLINT_PATH"
+            chmod +x "$OXLINT_PATH"
+          fi
 
       - name: Run
         working-directory: ${{ matrix.path }}
@@ -118,7 +151,7 @@ jobs:
         run: |
           set +e # disable exit on run
 
-          ./oxlint --fix --import-plugin --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin --node-plugin --promise-plugin -D all --silent
+          oxlint --fix --import-plugin --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin --node-plugin --promise-plugin -D all --silent
 
           EXIT_CODE=$?
 
