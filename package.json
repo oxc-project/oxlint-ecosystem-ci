@@ -13,5 +13,6 @@
         "reset": "node bin/reset.js",
         "clean": "node bin/clean.js",
         "lint": "npx oxlint@latest ."
-    }
+    },
+    "packageManager": "pnpm@10.16.1"
 }
