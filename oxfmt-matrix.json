@@ -1,0 +1,8 @@
+[
+  {
+    "repository": "vitejs/vite",
+    "ref": "main",
+    "path": "vite",
+    "command": "oxfmt -c ./.prettierrc.json --check"
+  }
+]
