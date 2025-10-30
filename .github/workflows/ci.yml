@@ -208,7 +208,7 @@ jobs:
             return body;
 
       - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
-        if: ${{ inputs.issue-number && inputs.comment-id }}
+        if: ${{ inputs.issue-number }}
         with:
           token: ${{ secrets.OXC_BOT_PAT }}
           repository: oxc-project/oxc
