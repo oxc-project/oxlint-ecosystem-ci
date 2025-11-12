@@ -1,6 +1,6 @@
-# `oxlint` Ecosystem CI
+# Oxc Ecosystem CI
 
-This repository is used to run integration tests for `oxlint` ecosystem projects.
+This repository is used to run integration tests for `oxlint` and `oxfmt` ecosystem projects.
 
 ## Add a new integration
 
@@ -8,7 +8,7 @@ This repository is used to run integration tests for `oxlint` ecosystem projects
 
 ## Maintenance
 
-* [Boshen](https://github.com/Boshen) may submit a `oxlint` adjustment PR to your repository if it fails to run correctly.
+* [Boshen](https://github.com/Boshen) may submit a `oxlint` and/or `oxfmt` adjustment PR to your repository if it fails to run correctly.
 * Due to maintenance burden, a [sponsorship](https://github.com/sponsors/Boshen) will have a more likely hood of having the PR accepted.
 
 ## Scheduled github workflow
