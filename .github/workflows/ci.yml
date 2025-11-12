@@ -70,14 +70,18 @@ jobs:
         env:
           RUSTFLAGS: "-C debug-assertions=true"
 
-      - run: pnpm pack
-        working-directory: ./apps/oxlint
-
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+      # `pnpm pack` does not work for `apps/oxlint` because:
+      # - `.node` is ignored, not being packed
+      # - Also, `bin` field does not exist
+      # Instead, using `npm/oxlint` for global CLI install
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           if-no-files-found: error
           name: oxlint
-          path: ./apps/oxlint/oxlint-*.tgz
+          path: |
+            ./apps/oxlint/dist
+            ./npm/oxlint/package.json
+            ./npm/oxlint/bin
 
   checkout:
     name: Read matrix.json
@@ -115,7 +119,7 @@ jobs:
       - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           name: oxlint
-          path: ${{ matrix.path }}
+          path: oxlint-package
 
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
@@ -125,20 +129,21 @@ jobs:
         with:
           version: 10
 
-      - name: Install oxlint package
+      - name: Install oxlint globally
         run: |
-          # Extract and install the package
-          tar -xzf ${{ matrix.path }}/oxlint-*.tgz
-          npm install -g ./package
-
-          # Create a wrapper script that uses node explicitly
-          OXLINT_PATH=$(which oxlint)
-          if [ -f "$OXLINT_PATH" ]; then
-            mv "$OXLINT_PATH" "${OXLINT_PATH}.js"
-            echo '#!/usr/bin/env bash' > "$OXLINT_PATH"
-            echo "exec node '${OXLINT_PATH}.js' \"\$@\"" >> "$OXLINT_PATH"
-            chmod +x "$OXLINT_PATH"
-          fi
+          # Create package structure
+          # ```
+          # oxlint-install
+          # |- package.json
+          # |- bin/oxlint
+          # |- dist/cli.js, *.node, etc
+          # ```
+          mkdir -p oxlint-install
+          cp oxlint-package/npm/oxlint/package.json oxlint-install/
+          cp -r oxlint-package/npm/oxlint/bin oxlint-install/
+          cp -r oxlint-package/apps/oxlint/dist oxlint-install/
+          # Install globally
+          npm install -g ./oxlint-install
 
       - name: Run
         working-directory: ${{ matrix.path }}
