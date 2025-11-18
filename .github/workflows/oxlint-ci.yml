@@ -1,0 +1,223 @@
+name: oxlint ecosystem ci
+
+on:
+  schedule:
+    - cron: "0 */3 * * *" # Every 3 hours.
+  pull_request:
+    types: [opened, synchronize]
+    paths-ignore:
+      - "**/*.md"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+  workflow_dispatch:
+    inputs: # for create comment action https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs
+      issue-number:
+        required: false
+        type: string
+      comment-id:
+        required: false
+        type: string
+      ref:
+        required: false
+        type: string
+        default: "main"
+
+jobs:
+  reply:
+    name: Reply
+    if: ${{ inputs.issue-number && inputs.comment-id }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
+        with:
+          token: ${{ secrets.OXC_BOT_PAT }}
+          repository: oxc-project/oxc
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          reactions: eyes
+
+  build:
+    name: Build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          repository: oxc-project/oxc
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+          show-progress: false
+
+      - uses: oxc-project/setup-rust@83350c0ef69ec34f00be596f1cb9302179b9f43d # v1.0.9
+        with:
+          save-cache: ${{ github.ref_name == 'main' }}
+
+      - uses: oxc-project/setup-node@fdbf0dfd334c4e6d56ceeb77d91c76339c2a0885 # v1.0.4
+
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
+      - run: pnpm install
+        working-directory: ./apps/oxlint
+
+      - run: pnpm run build
+        working-directory: ./apps/oxlint
+        env:
+          RUSTFLAGS: "-C debug-assertions=true"
+
+      # `pnpm pack` does not work for `apps/oxlint` because:
+      # - `.node` is ignored, not being packed
+      # - Also, `bin` field does not exist
+      # Instead, using `npm/oxlint` for global CLI install
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          if-no-files-found: error
+          name: oxlint
+          path: |
+            ./apps/oxlint/dist
+            ./npm/oxlint/package.json
+            ./npm/oxlint/bin
+
+  checkout:
+    name: Read oxlint-matrix.json
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setmatrix.outputs.content }}
+    steps:
+      - uses: taiki-e/checkout-action@b13d20b7cda4e2f325ef19895128f7ff735c0b3d # v1.3.1
+
+      - id: setmatrix
+        uses: jaywcjlove/github-action-read-file@d7632d78b76cbfbe8841dc31dd08dd2020175c80 # main
+        with:
+          localfile: ./oxlint-matrix.json
+
+  test:
+    needs: checkout
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.checkout.outputs.matrix) }}
+    name: Test ${{ matrix.repository }}
+    steps:
+      - name: Clone ${{ matrix.repository }}
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+          path: ${{ matrix.path }}
+          persist-credentials: false
+          show-progress: false
+
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: oxlint
+          path: oxlint-package
+
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
+        with:
+          node-version: 24
+
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: 10
+
+      - name: Install oxlint globally
+        run: |
+          # Create package structure
+          # ```
+          # oxlint-install
+          # |- package.json
+          # |- bin/oxlint
+          # |- dist/cli.js, *.node, etc
+          # ```
+          mkdir -p oxlint-install
+          cp oxlint-package/npm/oxlint/package.json oxlint-install/
+          cp -r oxlint-package/npm/oxlint/bin oxlint-install/
+          cp -r oxlint-package/apps/oxlint/dist oxlint-install/
+          # Install globally
+          npm install -g ./oxlint-install
+
+      - name: Run
+        working-directory: ${{ matrix.path }}
+        run: ${{ matrix.command }}
+
+      - name: Check Panic
+        working-directory: ${{ matrix.path }}
+        run: |
+          set +e # disable exit on run
+
+          oxlint --fix --import-plugin --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin --node-plugin --promise-plugin -D all --silent
+
+          EXIT_CODE=$?
+
+          # Panic returns exit code > 1, e.g. 101 when a Rust program panics
+          if [ $EXIT_CODE -gt 1 ]; then
+              echo "exitcode=$EXIT_CODE" >> $GITHUB_OUTPUT
+              exit $EXIT_CODE
+          fi
+
+          echo "exitcode=0" >> $GITHUB_OUTPUT
+          exit 0
+
+  comment:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    name: Reply Comment
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        id: script
+        if: ${{ inputs.issue-number }}
+        with:
+          github-token: ${{ secrets.OXC_BOT_PAT }}
+          result-encoding: string
+          script: |
+            const {
+              data: { jobs },
+            } = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              per_page: 100,
+            });
+            let result = jobs
+              .filter((job) => job.name.startsWith("Test "))
+              .map((job) => {
+                const suite = job.name.slice(5);
+                return { suite, conclusion: job.conclusion, link: job.html_url };
+              });
+            const url = `${context.serverUrl}//${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const urlLink = `[Open](${url})`;
+            const conclusionEmoji = {
+              success: ":white_check_mark:",
+              failure: ":x:",
+              cancelled: ":stop_button:",
+            };
+            const body = `
+            ## [Oxlint Ecosystem CI](${urlLink})
+            | suite | result |
+            |-------|--------|
+            ${result.map((r) => `| [${r.suite}](${r.link}) | ${conclusionEmoji[r.conclusion]} |`).join("\n")}
+            `;
+            return body;
+
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
+        if: ${{ inputs.issue-number && inputs.comment-id }}
+        with:
+          token: ${{ secrets.OXC_BOT_PAT }}
+          repository: oxc-project/oxc
+          issue-number: ${{ inputs.issue-number }}
+          comment-id: ${{ inputs.comment-id }}
+          body: ${{ steps.script.outputs.result }}
+          edit-mode: replace

@@ -1,17 +1,17 @@
-name: oxlint ecosystem ci
+name: oxfmt ecosystem ci
 
 on:
   schedule:
-    - cron: "0 */3 * * *" # Every 3 hours.
+    - cron: "30 1,7,13,19 * * *" # Every 6 hours, gaps in the oxlint-ci
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   push:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   workflow_dispatch:
     inputs: # for create comment action https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs
       issue-number:
@@ -23,7 +23,7 @@ on:
       ref:
         required: false
         type: string
-        default: 'main'
+        default: "main"
 
 jobs:
   reply:
@@ -63,28 +63,28 @@ jobs:
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - run: pnpm install
-        working-directory: ./apps/oxlint
 
-      - run: pnpm run build
-        working-directory: ./apps/oxlint
+      # Equivalent to `pnpm build` with `detect_code_removal` feature
+      - run: pnpm --filter ./apps/oxfmt run build-napi --release --features allocator,detect_code_removal
         env:
           RUSTFLAGS: "-C debug-assertions=true"
+      - run: pnpm --filter ./apps/oxfmt run build-js
 
-      # `pnpm pack` does not work for `apps/oxlint` because:
+      # `pnpm pack` does not work for `apps/oxfmt` because:
       # - `.node` is ignored, not being packed
       # - Also, `bin` field does not exist
-      # Instead, using `npm/oxlint` for global CLI install
+      # Instead, using `npm/oxfmt` for global CLI install
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
         with:
           if-no-files-found: error
-          name: oxlint
+          name: oxfmt
           path: |
-            ./apps/oxlint/dist
-            ./npm/oxlint/package.json
-            ./npm/oxlint/bin
+            ./apps/oxfmt/dist
+            ./npm/oxfmt/package.json
+            ./npm/oxfmt/bin
 
   checkout:
-    name: Read matrix.json
+    name: Read oxfmt-matrix.json
     needs: build
     runs-on: ubuntu-latest
     outputs:
@@ -95,7 +95,7 @@ jobs:
       - id: setmatrix
         uses: jaywcjlove/github-action-read-file@d7632d78b76cbfbe8841dc31dd08dd2020175c80 # main
         with:
-          localfile: ./matrix.json
+          localfile: ./oxfmt-matrix.json
 
   test:
     needs: checkout
@@ -118,8 +118,8 @@ jobs:
 
       - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: oxlint
-          path: oxlint-package
+          name: oxfmt
+          path: oxfmt-package
 
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
@@ -129,43 +129,25 @@ jobs:
         with:
           version: 10
 
-      - name: Install oxlint globally
+      - name: Install oxfmt globally
         run: |
           # Create package structure
           # ```
-          # oxlint-install
+          # oxfmt-install
           # |- package.json
-          # |- bin/oxlint
+          # |- bin/oxfmt
           # |- dist/cli.js, *.node, etc
           # ```
-          mkdir -p oxlint-install
-          cp oxlint-package/npm/oxlint/package.json oxlint-install/
-          cp -r oxlint-package/npm/oxlint/bin oxlint-install/
-          cp -r oxlint-package/apps/oxlint/dist oxlint-install/
+          mkdir -p oxfmt-install
+          cp oxfmt-package/npm/oxfmt/package.json oxfmt-install/
+          cp -r oxfmt-package/npm/oxfmt/bin oxfmt-install/
+          cp -r oxfmt-package/apps/oxfmt/dist oxfmt-install/
           # Install globally
-          npm install -g ./oxlint-install
+          npm install -g ./oxfmt-install
 
-      - name: Run
+      - name: Run oxfmt
         working-directory: ${{ matrix.path }}
         run: ${{ matrix.command }}
-
-      - name: Check Panic
-        working-directory: ${{ matrix.path }}
-        run: |
-          set +e # disable exit on run
-
-          oxlint --fix --import-plugin --jest-plugin --jsdoc-plugin --jsx-a11y-plugin --nextjs-plugin --react-perf-plugin --node-plugin --promise-plugin -D all --silent
-
-          EXIT_CODE=$?
-
-          # Panic returns exit code > 1, e.g. 101 when a Rust program panics
-          if [ $EXIT_CODE -gt 1 ]; then
-              echo "exitcode=$EXIT_CODE" >> $GITHUB_OUTPUT
-              exit $EXIT_CODE
-          fi
-
-          echo "exitcode=0" >> $GITHUB_OUTPUT
-          exit 0
 
   comment:
     needs: test
@@ -205,7 +187,7 @@ jobs:
               cancelled: ":stop_button:",
             };
             const body = `
-            ## [Oxlint Ecosystem CI](${urlLink})
+            ## [Oxfmt Ecosystem CI](${urlLink})
             | suite | result |
             |-------|--------|
             ${result.map((r) => `| [${r.suite}](${r.link}) | ${conclusionEmoji[r.conclusion]} |`).join("\n")}
