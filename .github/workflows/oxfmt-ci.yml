@@ -5,31 +5,22 @@ on:
     - cron: "30 1,7,13,19 * * *" # Every 6 hours, gaps in the oxlint-ci
   pull_request:
     types: [opened, synchronize]
-    paths:
-      - "oxfmt-matrix.json"
-      - ".github/workflows/oxfmt-ci.yml"
-      - "bin/clone-oxfmt.js"
-      - "bin/test-oxfmt.js"
+    paths-ignore:
+      - "**/*.md"
   push:
     branches:
       - main
-    paths:
-      - "oxfmt-matrix.json"
-      - ".github/workflows/oxfmt-ci.yml"
-      - "bin/clone-oxfmt.js"
-      - "bin/test-oxfmt.js"
+    paths-ignore:
+      - "**/*.md"
   workflow_dispatch:
-    inputs:
+    inputs: # for create comment action https://github.com/peter-evans/create-or-update-comment?tab=readme-ov-file#action-inputs
       issue-number:
-        description: "Issue number for comment"
         required: false
         type: string
       comment-id:
-        description: "Comment ID to update"
         required: false
         type: string
       ref:
-        description: "Git ref to build from"
         required: false
         type: string
         default: "main"
@@ -132,7 +123,7 @@ jobs:
 
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
-          node-version: 22
+          node-version: 24
 
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
         with:
